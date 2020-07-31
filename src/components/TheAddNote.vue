@@ -1,12 +1,11 @@
 <template>
   <section>
     <button
-      title="Создать заметку"
       class="show-block-btn"
-      @click="noneActiveBlock = !noneActiveBlock"
+      @click="isActiveClass = !isActiveClass"
     ></button>
     <div
-      :class="noneActiveBlock === true ? 'none-active' : 'active'"
+      :class="isActiveClass ? 'none-active' : 'active'"
       class="block-add-todo"
     >
       <p>
@@ -17,7 +16,7 @@
         Заметка -
         <input class="input-add-text" type="text" v-model="newTextTodo" />
       </p>
-      <button type="button" @click="createTodo({ newTitle, newTextTodo })">
+      <button @click="createTodo({ newTitle, newTextTodo })">
         Создать заметку
       </button>
     </div>
@@ -28,7 +27,7 @@ import { mapMutations } from "vuex";
 export default {
   data() {
     return {
-      noneActiveBlock: true,
+      isActiveClass: true,
       newTitle: "",
       newTextTodo: "",
     };
