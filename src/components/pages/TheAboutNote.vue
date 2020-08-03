@@ -1,55 +1,46 @@
 <template>
   <section class="container">
     <article>
-      <button @click="activeClass = true">
-        Отменить редактирование
-      </button>
-      <button @click="saveChanges()">Сохранить изменения</button>
-      <div class="modal-block" :class="{ 'active-flex': isActiveClass }">
+      <button @click="isActiveClassHomeBackBlock = true">Отменить редактирование</button>
+      <div class="modal-block" :class="{ 'active-flex': isActiveClassHomeBackBlock }">
         <div class="block-remove-todo">
-          <p>
-            Все изменения отменятся. Вы действительно хотите вернутся обратно?
-          </p>
-          <button @click="backToHome()">Да</button>
-          <button @click="isActiveClass = false">Нет</button>
+          <p>Все изменения отменятся. Вы действительно хотите вернутся обратно?</p>
+          <button @click="backToHome({idObj, defaultNotes})">Да</button>
+          <button @click="isActiveClassHomeBackBlock = false">Нет</button>
         </div>
       </div>
+      <button @click="isActiveClassDeleteBlock = true">Удалить заметку</button>
+      <div class="modal-block" :class="{ 'active-flex': isActiveClassDeleteBlock }">
+        <div class="block-remove-todo">
+          <p>Вы действительно хотите удалить заметку?</p>
+          <button @click="remove(idObj)">Да</button>
+          <button @click="isActiveClassDeleteBlock = false">Нет</button>
+        </div>
+      </div>
+      <button @click="saveChanges({idObj, changedNotes})">Сохранить изменения</button>
+      <button @click="refresh()">Отменить внесенное изменение</button>
+      <button>Повторить отмененное изменение</button>
     </article>
-    <article v-if="notes">
+    <article v-if="changedNotes">
       <div class="block-about-todo">
-        <h2>{{ notes.title }}</h2>
+        <h2>{{ defaultNotes.title }}</h2>
         <div>
           <input type="text" class="input-create-note" v-model="valueNote" />
-          <button @click="createNote(valueNote)">
-            Добавить пункт
-          </button>
-          <div
-            v-for="(note, index) in notes.listText"
-            :key="index"
-            class="text-note"
-          >
+          <button @click="createNote(valueNote)">Добавить пункт</button>
+          <div v-for="(note, index) in changedNotes.listText" :key="index" class="text-note">
             <input
-              @change="updateCheck({ idObj, index })"
+              @change="updateCheck(index)"
               type="checkbox"
               :checked="note.checked"
               class="checkbox-note"
             />
-            <p :class="{ 'checkbox-true': note.checked }">
-              {{ note.textTodo }}
-            </p>
+            <p :class="{ 'checkbox-true': note.checked }">{{ note.textTodo }}</p>
             <button class="remove-btn" @click="removeNote(index)"></button>
 
-            <button
-              class="change-btn"
-              @click="hideBlockRewriteNote(index)"
-            ></button>
-            <div
-              :class="[activeNote === index ? 'active-block' : 'none-active']"
-            >
+            <button class="change-btn" @click="hideBlockRewriteNote(index)"></button>
+            <div :class="[activeNote === index ? 'active-block' : 'none-active']">
               <input type="text" v-model="newValueNote" />
-              <button @click="rewrite(newValueNote, index)">
-                Записать
-              </button>
+              <button @click="rewriteNote(newValueNote, index)">Записать</button>
             </div>
           </div>
         </div>
@@ -58,13 +49,15 @@
   </section>
 </template>
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex";
+import { mapMutations, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      isActiveClass: false,
+      isActiveClassDeleteBlock: false,
+      isActiveClassHomeBackBlock: false,
       activeNote: null,
-      notes: null,
+      defaultNotes: null,
+      changedNotes: null,
       idObj: this.$route.params.id,
       valueNote: "",
       newValueNote: "",
@@ -74,36 +67,61 @@ export default {
     ...mapGetters(["getTodoById"]),
   },
   methods: {
-    ...mapMutations(["updateCheck", "saveChanges"]),
+    ...mapMutations(["saveChanges", "unSaveChanges", "removeTodoInStore"]),
     createNote(valueNote) {
       let newNote = {
         checked: false,
         textTodo: valueNote,
       };
-      this.notes.listText.push(newNote);
+      this.changedNotes.listText.push(newNote);
+    },
+    updateCheck(index) {
+      let newCheckState = this.changedNotes.listText.find(
+        (elem, id) => id === Number(index)
+      );
+      newCheckState.checked = !newCheckState.checked;
     },
     removeNote(index) {
-      let objNote = this.notes.listText.findIndex(
+      let objNote = this.changedNotes.listText.findIndex(
         (note, indexNote) => indexNote === index
       );
-      return this.notes.listText.splice(objNote, 1);
+      this.changedNotes.listText.splice(objNote, 1);
+    },
+    remove(idObj) {
+      this.removeTodoInStore(idObj);
+      this.isActiveClassDeleteBlock = false;
+      this.$router.push({ path: "/" });
     },
     rewriteNote(newValueNote, index) {
-      let obj = this.notes.listText.find((idNote) => idNote === index);
-      console.log(obj);
-      /*  return (obj.textTodo = newValueNote); */
+      let obj = this.changedNotes.listText.find(
+        (elem, idNote) => idNote === Number(index)
+      );
+      obj.textTodo = newValueNote;
       this.activeNote = null;
     },
     hideBlockRewriteNote(index) {
       this.newValueNote = "";
       this.activeNote = index;
     },
-    backToHome() {
+    backToHome({ idObj, defaultNotes }) {
+      this.unSaveChanges({ idObj, defaultNotes });
       this.$router.push({ path: "/" });
+    },
+    refresh() {
+      this.changedNotes = JSON.parse(
+        JSON.stringify(this.getTodoById(this.idObj))
+      );
+      console.log(this.changedNotes);
     },
   },
   created() {
-    this.notes = { ...this.getTodoById(this.idObj) };
+    this.defaultNotes = JSON.parse(
+      JSON.stringify(this.getTodoById(this.idObj))
+    );
+
+    this.changedNotes = JSON.parse(
+      JSON.stringify(this.getTodoById(this.idObj))
+    );
   },
 };
 </script>

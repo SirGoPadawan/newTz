@@ -36,8 +36,18 @@ export default new Vuex.Store({
     ],
   },
   mutations: {
+    saveChanges(state, { idObj, changedNotes }) {
+      state.todos.splice(idObj, 1, changedNotes);
+    },
+    unSaveChanges(state, { idObj, defaultNotes }) {
+      state.todos.splice(idObj, 1, defaultNotes);
+    },
     removeTodo(state, index) {
       state.todos = state.todos.filter((obj, id) => id !== index);
+    },
+    removeTodoInStore(state, idObj) {
+      state.todos.splice(idObj, 1);
+      console.log(state.todos);
     },
     createTodo(state, { newTitle, newTextTodo }) {
       if (!newTitle || !newTextTodo) return;
@@ -46,16 +56,6 @@ export default new Vuex.Store({
         listText: [{ checked: false, textTodo: newTextTodo }],
       };
       state.todos.push(newObj);
-    },
-    /*  rewriteNote(state, { newValueNote, idObj, index }) {
-      let obj = this.getters.getTodoById(idObj);
-      let newNote = obj.listText.find((elem, id) => id === Number(index));
-      newNote.textTodo = newValueNote;
-    }, */
-    updateCheck(state, { idObj, index }) {
-      let obj = this.getters.getTodoById(idObj);
-      let newCheckState = obj.listText.find((elem, id) => id === Number(index));
-      newCheckState.checked = !newCheckState.checked;
     },
   },
   getters: {
