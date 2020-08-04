@@ -13,16 +13,10 @@
 import { mapMutations } from "vuex";
 export default {
   props: ["idBlock", "activeBlock"],
-  data() {
-    return {
-      copyActiveBlock: this.activeBlock,
-    };
-  },
   methods: {
     ...mapMutations(["removeTodo"]),
     hide() {
-      this.copyActiveBlock = false;
-      this.$emit("update-activeBlock", this.copyActiveBlock);
+      this.$emit("update-activeBlock");
     },
     removeComplete() {
       this.removeTodo(this.idBlock);

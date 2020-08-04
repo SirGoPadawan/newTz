@@ -47,7 +47,6 @@ export default new Vuex.Store({
     },
     removeTodoInStore(state, idObj) {
       state.todos.splice(idObj, 1);
-      console.log(state.todos);
     },
     createTodo(state, { newTitle, newTextTodo }) {
       if (!newTitle || !newTextTodo) return;

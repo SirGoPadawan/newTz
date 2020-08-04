@@ -30,5 +30,14 @@ export default {
       this.$router.push({ path: "/note/" + index });
     },
   },
+  mounted() {
+    let localTodos = JSON.stringify(this.todos);
+    localStorage.setItem("localTodos", localTodos);
+  },
+  destroyed() {
+    let LT = localStorage.getItem("localTodos");
+    JSON.parse(LT);
+    console.log(LT);
+  },
 };
 </script>

@@ -23,8 +23,8 @@ export default {
     };
   },
   methods: {
-    update(copyActiveBlock) {
-      this.activeBlock = copyActiveBlock;
+    update() {
+      this.activeBlock = false;
     },
     getIdBlockByChild(index) {
       this.idBlock = index;
