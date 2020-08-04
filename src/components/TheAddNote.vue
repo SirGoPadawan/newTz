@@ -1,24 +1,25 @@
 <template>
-  <section>
-    <button
-      class="show-block-btn"
-      @click="isActiveClass = !isActiveClass"
-    ></button>
+  <section class="block-add-todo">
+    <button class="btn btn-show" @click="isActiveClass = true"></button>
     <div
-      :class="isActiveClass ? 'none-active' : 'active'"
-      class="block-add-todo"
+      class="modal-block"
+      :class="isActiveClass ? 'active-flex' : 'none-active'"
     >
-      <p>
-        Заголовок заметки -
-        <input class="input-add-text" type="text" v-model="newTitle" />
-      </p>
-      <p>
-        Заметка -
-        <input class="input-add-text" type="text" v-model="newTextTodo" />
-      </p>
-      <button @click="createTodo({ newTitle, newTextTodo })">
-        Создать заметку
-      </button>
+      <div class="modal-block__items">
+        <p>
+          Заголовок заметки -
+          <input class="input-add-text" type="text" v-model="newTitle" />
+        </p>
+        <p>
+          Заметка -
+          <input class="input-add-text" type="text" v-model="newTextTodo" />
+        </p>
+        <button
+          class="btn btn-yes"
+          @click="createTodo({ newTitle, newTextTodo })"
+        ></button>
+        <button class="btn btn-no" @click="isActiveClass = false"></button>
+      </div>
     </div>
   </section>
 </template>
@@ -27,7 +28,7 @@ import { mapMutations } from "vuex";
 export default {
   data() {
     return {
-      isActiveClass: true,
+      isActiveClass: false,
       newTitle: "",
       newTextTodo: "",
     };
