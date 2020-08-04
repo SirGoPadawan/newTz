@@ -30,7 +30,7 @@
   display: none;
 }
 .active,
-.block-remove-todo {
+.modal-block__items {
   border: 1px solid;
   border-radius: 10px;
   padding: 20px;
@@ -96,7 +96,7 @@
   top: 0;
   left: 0;
 }
-.block-remove-todo {
+.modal-block__items {
   border-color: #ccc;
   z-index: 2;
   background: aliceblue;

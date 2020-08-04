@@ -1,26 +1,20 @@
 <template>
   <div class="modal-block" :class="{ 'active-flex': activeBlock }">
-    <div class="block-remove-todo">
-      <p>Вы действительно хотите удалить заметку?</p>
+    <div class="modal-block__items">
+      <p>{{ title }}</p>
       <div>
-        <button @click.prevent="removeComplete()">Да</button>
+        <button @click.prevent="func()">Да</button>
         <button @click.prevent="hide()">Нет</button>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapMutations } from "vuex";
 export default {
-  props: ["idBlock", "activeBlock"],
+  props: ["activeBlock", "title", "func"],
   methods: {
-    ...mapMutations(["removeTodo"]),
     hide() {
       this.$emit("update-activeBlock");
-    },
-    removeComplete() {
-      this.removeTodo(this.idBlock);
-      this.hide();
     },
   },
 };

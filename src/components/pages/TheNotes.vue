@@ -2,14 +2,16 @@
   <section class="container">
     <the-add-note />
     <v-modal
-      :idBlock="idBlock"
       :activeBlock="activeBlock"
       @update-activeBlock="update"
+      title="Вы действительно хотите удалить заметку?"
+      :func="removeComplete"
     />
     <v-todo :getIdBlockByChild="getIdBlockByChild" />
   </section>
 </template>
 <script>
+import { mapMutations } from "vuex";
 export default {
   components: {
     "the-add-note": () => import("../TheAddNote.vue"),
@@ -19,16 +21,21 @@ export default {
   data() {
     return {
       activeBlock: false,
-      idBlock: null,
+      idObj: null,
     };
   },
   methods: {
+    ...mapMutations(["removeTodo"]),
     update() {
       this.activeBlock = false;
     },
     getIdBlockByChild(index) {
-      this.idBlock = index;
+      this.idObj = index;
       this.activeBlock = true;
+    },
+    removeComplete() {
+      this.removeTodo(this.idObj);
+      this.activeBlock = false;
     },
   },
 };

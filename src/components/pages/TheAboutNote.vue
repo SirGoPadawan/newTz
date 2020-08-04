@@ -1,32 +1,22 @@
 <template>
   <section class="container">
     <article>
-      <button @click="isActiveClassHomeBackBlock = true">
+      <button @click="activeHomeBlock = true">
         Отменить редактирование
       </button>
-      <div
-        class="modal-block"
-        :class="{ 'active-flex': isActiveClassHomeBackBlock }"
-      >
-        <div class="block-remove-todo">
-          <p>
-            Все изменения отменятся. Вы действительно хотите вернутся обратно?
-          </p>
-          <button @click="backToHome({ idObj, defaultNotes })">Да</button>
-          <button @click="isActiveClassHomeBackBlock = false">Нет</button>
-        </div>
-      </div>
-      <button @click="isActiveClassDeleteBlock = true">Удалить заметку</button>
-      <div
-        class="modal-block"
-        :class="{ 'active-flex': isActiveClassDeleteBlock }"
-      >
-        <div class="block-remove-todo">
-          <p>Вы действительно хотите удалить заметку?</p>
-          <button @click="remove(idObj)">Да</button>
-          <button @click="isActiveClassDeleteBlock = false">Нет</button>
-        </div>
-      </div>
+      <v-modal
+        :activeBlock="activeHomeBlock"
+        @update-activeBlock="updateStateHomeBackBlock"
+        title="Все изменения отменятся. Вы действительно хотите вернутся обратно?"
+        :func="backToHome"
+      />
+      <button @click="activeDeleteBlock = true">Удалить заметку</button>
+      <v-modal
+        :activeBlock="activeDeleteBlock"
+        @update-activeBlock="updateStateDeleteBlock"
+        title="Вы действительно хотите удалить заметку?"
+        :func="preRemoveTodoInStore"
+      />
       <button @click="saveChanges({ idObj, changedNotes })">
         Сохранить изменения
       </button>
@@ -75,11 +65,15 @@
 </template>
 <script>
 import { mapMutations, mapGetters } from "vuex";
+
 export default {
+  components: {
+    "v-modal": () => import("../VModal.vue"),
+  },
   data() {
     return {
-      isActiveClassDeleteBlock: false,
-      isActiveClassHomeBackBlock: false,
+      activeHomeBlock: false,
+      activeDeleteBlock: false,
       activeNote: null,
       defaultNotes: null,
       changedNotes: null,
@@ -94,6 +88,16 @@ export default {
   },
   methods: {
     ...mapMutations(["saveChanges", "unSaveChanges", "removeTodoInStore"]),
+    preRemoveTodoInStore() {
+      this.$router.push({ path: "/" });
+      this.removeTodoInStore(this.idObj);
+    },
+    updateStateHomeBackBlock() {
+      this.activeHomeBlock = false;
+    },
+    updateStateDeleteBlock() {
+      this.activeDeleteBlock = false;
+    },
     createNote(valueNote) {
       let newNote = {
         checked: false,
@@ -133,8 +137,11 @@ export default {
       this.newValueNote = "";
       this.activeNote = index;
     },
-    backToHome({ idObj, defaultNotes }) {
-      this.unSaveChanges({ idObj, defaultNotes });
+    backToHome() {
+      this.unSaveChanges({
+        idObj: this.idObj,
+        defaultNotes: this.defaultNotes,
+      });
       this.$router.push({ path: "/" });
     },
     refresh() {
@@ -150,7 +157,6 @@ export default {
     this.defaultNotes = JSON.parse(
       JSON.stringify(this.getTodoById(this.idObj))
     );
-
     this.changedNotes = JSON.parse(
       JSON.stringify(this.getTodoById(this.idObj))
     );
