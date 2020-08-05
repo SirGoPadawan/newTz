@@ -1,10 +1,12 @@
 <template>
   <div class="modal-block" :class="{ 'active-flex': activeBlock }">
     <div class="modal-block__items">
-      <p>{{ title }}</p>
+      <p>
+        <slot></slot>
+      </p>
       <div>
-        <button @click.prevent="func()">Да</button>
-        <button @click.prevent="hide()">Нет</button>
+        <button @click.prevent="func()" class="btn btn-yes"></button>
+        <button @click.prevent="hide()" class="btn btn-no"></button>
       </div>
     </div>
   </div>

@@ -1,21 +1,21 @@
 <template>
-  <div class="todos-list">
+  <section class="todos-list">
     <article class="block-todo" v-for="(todo, index) in todos" :key="index">
       <div class="block-todo__top">
-        <button @click="getIdBlockByChild(index)" class="remove-btn"></button>
-        <button @click="goToNote(index)" class="change-btn"></button>
+        <button @click="getIdBlockByChild(index)" class="btn btn-delete"></button>
+        <button @click="goToNote(index)" class="btn btn-pen"></button>
       </div>
       <div class="block-todo__bottom">
         <h2 class="title-todo">{{ todo.title }}</h2>
-        <p
-          v-for="(note, noteIndex) in getUncheckedNotes(index)"
-          :key="noteIndex"
-        >
-          {{ note.textTodo }}
-        </p>
+        <ol>
+          <li
+            v-for="(note, noteIndex) in getUncheckedNotes(index)"
+            :key="noteIndex"
+          >{{ note.textTodo }}</li>
+        </ol>
       </div>
     </article>
-  </div>
+  </section>
 </template>
 <script>
 import { mapGetters, mapState } from "vuex";

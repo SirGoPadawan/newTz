@@ -1,24 +1,17 @@
 <template>
-  <section class="block-add-todo">
-    <button class="btn btn-show" @click="isActiveClass = true"></button>
-    <div
-      class="modal-block"
-      :class="isActiveClass ? 'active-flex' : 'none-active'"
-    >
-      <div class="modal-block__items">
-        <p>
-          Заголовок заметки -
-          <input class="input-add-text" type="text" v-model="newTitle" />
-        </p>
-        <p>
-          Заметка -
-          <input class="input-add-text" type="text" v-model="newTextTodo" />
-        </p>
-        <div class="buttons-box">
-          <button class="btn btn-yes" @click="create()"></button>
-          <button class="btn btn-no" @click="isActiveClass = false"></button>
-        </div>
-      </div>
+  <section class="block-add">
+    <button class="btn btn-show" @click="isActiveClass = !isActiveClass"></button>
+    <div class="block-add-todo" :class="isActiveClass ? 'active-flex' : 'none-active'">
+      <article class="block-add-todo__text">
+        <p>Заголовок заметки -</p>
+        <input class="input-add-note" type="text" v-model="newTitle" />
+        <p>Заметка -</p>
+        <input class="input-add-note" type="text" v-model="newTextTodo" />
+      </article>
+      <article class="buttons-box">
+        <button class="btn btn-yes" @click="create()"></button>
+        <button class="btn btn-no" @click="isActiveClass = false"></button>
+      </article>
     </div>
   </section>
 </template>

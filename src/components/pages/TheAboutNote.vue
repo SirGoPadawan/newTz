@@ -1,61 +1,54 @@
 <template>
   <section class="container">
-    <article>
-      <button @click="activeHomeBlock = true">
-        Отменить редактирование
-      </button>
+    <article class="edit-menu">
+      <button @click="activeHomeBlock = true" class="edit-menu__btn">Отменить редактирование</button>
       <v-modal
         :activeBlock="activeHomeBlock"
         @update-activeBlock="updateStateHomeBackBlock"
-        title="Все изменения отменятся. Вы действительно хотите вернутся обратно?"
         :func="backToHome"
-      />
-      <button @click="activeDeleteBlock = true">Удалить заметку</button>
+      >Все изменения отменятся. Вы действительно хотите вернутся обратно?</v-modal>
+      <button @click="activeDeleteBlock = true" class="edit-menu__btn">Удалить заметку</button>
       <v-modal
         :activeBlock="activeDeleteBlock"
         @update-activeBlock="updateStateDeleteBlock"
-        title="Вы действительно хотите удалить заметку?"
         :func="preRemoveTodoInStore"
-      />
-      <button @click="saveChanges({ idObj, changedNotes })">
-        Сохранить изменения
-      </button>
-      <button @click="refresh()">Отменить внесенное изменение</button>
-      <button @click="rollback()">Повторить отмененное изменение</button>
+      >Вы действительно хотите удалить заметку?</v-modal>
+      <button
+        @click="saveChanges({ idObj, changedNotes })"
+        class="edit-menu__btn"
+      >Сохранить изменения</button>
+      <button @click="refresh()" class="edit-menu__btn">Отменить внесенное изменение</button>
+      <button @click="rollback()" class="edit-menu__btn">Повторить отмененное изменение</button>
     </article>
     <article v-if="changedNotes">
       <div class="block-about-todo">
-        <h2>{{ defaultNotes.title }}</h2>
+        <h2 class="block-about-todo__title">{{ defaultNotes.title }}</h2>
         <div>
-          <input type="text" class="input-create-note" v-model="valueNote" />
-          <button @click="createNote(valueNote)">Добавить пункт</button>
-          <div
-            v-for="(note, index) in changedNotes.listText"
-            :key="index"
-            class="text-note"
-          >
+          <div class="items-create-note">
+            <input type="text" class="input-create-note" v-model="valueNote" />
+            <button @click="createNote(valueNote)" class="edit-btn">Добавить пункт</button>
+          </div>
+
+          <div class="items-note" v-for="(note, index) in changedNotes.listText" :key="index">
             <input
               @change="updateCheck(index)"
               type="checkbox"
               :checked="note.checked"
               class="checkbox-note"
             />
-            <p :class="{ 'checkbox-true': note.checked }">
-              {{ note.textTodo }}
-            </p>
-            <button class="remove-btn" @click="removeNote(index)"></button>
+            <p class="text-note" :class="{ 'checkbox-true': note.checked }">{{ note.textTodo }}</p>
+            <button class="btn btn-delete" @click="removeNote(index)"></button>
 
-            <button
-              class="change-btn"
-              @click="hideBlockRewriteNote(index)"
-            ></button>
+            <button class="btn btn-pen" @click="hideBlockRewriteNote(index)"></button>
             <div
-              :class="[activeNote === index ? 'active-block' : 'none-active']"
+              class="change-text-note"
+              :class="[activeNote === index ? 'active-flex' : 'none-active']"
             >
-              <input type="text" v-model="newValueNote" />
-              <button @click="rewriteNote(newValueNote, index)">
-                Записать
-              </button>
+              <input type="text" class="input-rewrite-note" v-model="newValueNote" />
+              <button
+                @click="rewriteNote(newValueNote, index)"
+                class="edit-btn rewrite-btn"
+              >Перезаписать</button>
             </div>
           </div>
         </div>
@@ -99,6 +92,9 @@ export default {
       this.activeDeleteBlock = false;
     },
     createNote(valueNote) {
+      if (!valueNote) {
+        return;
+      }
       let newNote = {
         checked: false,
         textTodo: valueNote,
@@ -126,6 +122,10 @@ export default {
       this.$router.push({ path: "/" });
     },
     rewriteNote(newValueNote, index) {
+      if (!newValueNote) {
+        this.activeNote = null;
+        return;
+      }
       let obj = this.changedNotes.listText.find(
         (elem, idNote) => idNote === Number(index)
       );

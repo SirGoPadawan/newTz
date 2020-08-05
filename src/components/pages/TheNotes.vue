@@ -4,9 +4,8 @@
     <v-modal
       :activeBlock="activeBlock"
       @update-activeBlock="update"
-      title="Вы действительно хотите удалить заметку?"
       :func="removeComplete"
-    />
+    >Вы действительно хотите удалить заметку?</v-modal>
     <v-todo :getIdBlockByChild="getIdBlockByChild" />
   </section>
 </template>
