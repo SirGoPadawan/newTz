@@ -14,11 +14,10 @@
           Заметка -
           <input class="input-add-text" type="text" v-model="newTextTodo" />
         </p>
-        <button
-          class="btn btn-yes"
-          @click="createTodo({ newTitle, newTextTodo })"
-        ></button>
-        <button class="btn btn-no" @click="isActiveClass = false"></button>
+        <div class="buttons-box">
+          <button class="btn btn-yes" @click="create()"></button>
+          <button class="btn btn-no" @click="isActiveClass = false"></button>
+        </div>
       </div>
     </div>
   </section>
@@ -35,6 +34,15 @@ export default {
   },
   methods: {
     ...mapMutations(["createTodo"]),
+    create() {
+      this.createTodo({
+        newTitle: this.newTitle,
+        newTextTodo: this.newTextTodo,
+      });
+      this.isActiveClass = false;
+      this.newTitle = "";
+      this.newTextTodo = "";
+    },
   },
 };
 </script>

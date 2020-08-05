@@ -17,7 +17,6 @@
   border: 1px solid;
   border-radius: 10px;
   padding: 10px;
-  height: min-content;
 }
 .block-todo__top {
   display: flex;
@@ -86,6 +85,11 @@
   border-radius: 5px;
   padding: 5px 5px;
   outline: none;
+}
+.buttons-box {
+  display: flex;
+  justify-content: space-between;
+  width: 35%;
 }
 .modal-block {
   display: none;
