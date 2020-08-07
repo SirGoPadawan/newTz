@@ -7,6 +7,7 @@ import TheAboutNote from "./components/pages/TheAboutNote.vue";
 Vue.use(VueRouter);
 
 const router = new VueRouter({
+  mode: "history",
   routes: [
     {
       path: "/",
